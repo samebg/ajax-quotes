@@ -3,16 +3,78 @@
 <head>
   <meta charset="UTF-8" />
   <title>AJAX Quotes</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Tulpen+One&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Qwitcher+Grypen:wght@700&display=swap');
+
+    #quote-container {
+      display: none;
+      text-shadow: 4px 4px 4px #aaa;
+    }
+  </style>
 </head>
 <body>
   <h1>AJAX Quotes</h1>
-  <button onclick="getRandomQuote()">Get Random Quote</button>
-
+  <div id="quote-container">Quotes go here</div>
 
   <script>
+
+    var counter=0;
+    
     function getRandomQuote(){
-      alert("Can you see this?")
-    }
+      // alert("Can you see this?");
+      var fonts = ["Qwitcher Grypen", "Tulpen One", "Shadows Into Light"];
+
+      var xhr = new XMLHttpRequest();
+      
+      xhr.open('GET','random_quotes.php',true);
+
+      xhr.onload = function(){
+        //code to run on return of data
+        
+        if(xhr.status==200){//data is good
+          //document.querySelector("#quote-container").innerText = xhr.responseText;
+          let el = document.querySelector("#quote-container");
+          el.innerText = xhr.responseText;//adds text
+          el.style.display="block";
+          el.style.fontFamily = fonts[counter];
+          counter++;
+
+          if(counter >= fonts.length){//reset counter
+            counter = 0;
+          }
+          el.classList.add("fade-in");
+
+
+          setTimeout(function(){
+            el.classList.remove("fade-in");
+          }, 1000);
+
+        }else{//not good
+          alert("No good data returned");
+        };
+
+      };
+
+      xhr.onerror = function(){
+        //code to run on error of data
+        alert("AJAX ERROR!");
+      };
+
+      xhr.send();
+
+    }//end random quote here
+    function displayRandomQuote(){
+        //will load quoute on page load and at intervals
+        
+        //run on initial page load
+        getRandomQuote();
+
+        setInterval(getRandomQuote,5000);
+      };
+
+    displayRandomQuote();
   </script>
 </body>
 </html>
